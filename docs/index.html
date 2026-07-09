@@ -16,19 +16,9 @@
             overflow: hidden;
             font-family: 'Segoe UI', sans-serif;
         }
-        .logo-container {
-            margin-bottom: 40px;
-        }
-        .win-logo {
-            width: 100px;
-            height: 100px;
-        }
-        /* Win11 Spinner */
-        .spinner {
-            width: 40px;
-            height: 40px;
-            position: relative;
-        }
+        .logo-container { margin-bottom: 40px; }
+        .win-logo { width: 100px; height: 100px; }
+        .spinner { width: 40px; height: 40px; position: relative; }
         .dot {
             position: absolute;
             width: 4px;
@@ -54,13 +44,11 @@
     </style>
 </head>
 <body>
-
     <div class="logo-container">
         <svg class="win-logo" viewBox="0 0 24 24" fill="#0078d4">
             <path d="M0 0h11.314v11.314H0V0zm12.686 0H24v11.314H12.686V0zM0 12.686h11.314V24H0V12.686zm12.686 0H24V24H12.686V12.686z"/>
         </svg>
     </div>
-
     <div class="spinner">
         <div class="dot"></div>
         <div class="dot"></div>
@@ -68,12 +56,11 @@
         <div class="dot"></div>
         <div class="dot"></div>
     </div>
-
     <script>
-        // Simulate real OS initialization time before loading the core desktop UI
         setTimeout(() => {
-            window.location.href = 'desktop.html';
-        }, 3500);
+            // Using a relative path to ensure it loads desktop.html within the /docs directory
+            window.location.href = "./desktop.html";
+        }, 3000);
     </script>
 </body>
 </html>
