@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 11 Desktop (26H2)</title>
+    <link rel="stylesheet" href="desktop.css">
+</head>
+<body>
+
+    <main class="desktop-area">
+        <div class="icon-node" onclick="toggleWindow('explorer-app')">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 10C4 7.79086 5.79086 6 8 6H18L24 12H40C42.2091 12 44 13.7909 44 16V40C44 42.2091 42.2091 44 40 44H8C5.79086 44 4 42.2091 4 40V10Z" fill="#FFA000"/>
+                <path d="M40 16H12L6 40H40C42.2091 40 44 38.2091 44 36V20C44 17.7909 42.2091 16 40 16Z" fill="#FFCA28"/>
+            </svg>
+            <span>File Explorer</span>
+        </div>
+    </main>
+
+    <div class="app-window" id="explorer-app" style="top: 20%; left: 25%;">
+        <div class="window-titlebar" id="explorer-app-header">
+            <div style="font-size: 13px; display: flex; align-items: center; gap: 8px;">📁 File Explorer (26H2 Storage Core)</div>
+            <div class="window-actions">
+                <span class="action-btn" onclick="toggleWindow('explorer-app')">✕</span>
+            </div>
+        </div>
+        <div class="window-view-pane">
+            <h3 style="margin-bottom: 12px;">Home Directory</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Welcome to your compiled 26H2 file container sandbox.</p>
+        </div>
+    </div>
+
+    <div class="start-flyout" id="startSystemFlyout">
+        <input type="text" class="copilot-search-box" placeholder="Ask Copilot or search files...">
+        <div class="grid-apps-container">
+            <div class="icon-node" onclick="toggleWindow('explorer-app'); toggleStart();">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M4 10h40v30H4z" fill="#FFA000"/></svg>
+                <span>Explorer</span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="taskbar-container">
+        <div class="taskbar-left">⚡ System Active</div>
+        
+        <div class="taskbar-center-tray">
+            <div class="tb-icon-wrapper" onclick="toggleStart()">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="#0078d4">
+                    <path d="M0 0h11.314v11.314H0V0zm12.686 0H24v11.314H12.686V0zM0 12.686h11.314V24H0V12.686zm12.686 0H24V24H12.686V12.686z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="taskbar-right">
+            <span id="systray-clock">--:--</span>
+        </div>
+    </footer>
+
+    <script>
+        // Real-time Engine Updates
+        function setTime() {
+            const date = new Date();
+            document.getElementById('systray-clock').textContent = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+        setInterval(setTime, 1000); setTime();
+
+        // Control Visibility states
+        function toggleStart() {
+            document.getElementById('startSystemFlyout').classList.toggle('visible');
+        }
+
+        function toggleWindow(id) {
+            const win = document.getElementById(id);
+            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Apply Native Draggable Mechanics to individual active app windows
+        bindDrag(document.getElementById("explorer-app"));
+
+        function bindDrag(el) {
+            let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
+            const header = document.getElementById(el.id + "-header");
+            if (header) header.onmousedown = startDrag;
+
+            function startDrag(e) {
+                if(e.target.classList.contains('action-btn')) return;
+                e.preventDefault();
+                p3 = e.clientX; p4 = e.clientY;
+                document.onmouseup = stopDrag;
+                document.onmousemove = moveTarget;
+            }
+
+            function moveTarget(e) {
+                e.preventDefault();
+                p1 = p3 - e.clientX; p2 = p4 - e.clientY;
+                p3 = e.clientX; p4 = e.clientY;
+                el.style.top = (el.offsetTop - p2) + "px";
+                el.style.left = (el.offsetLeft - p1) + "px";
+            }
+
+            function stopDrag() {
+                document.onmouseup = null; document.onmousemove = null;
+            }
+        }
+    </script>
+</body>
+</html>

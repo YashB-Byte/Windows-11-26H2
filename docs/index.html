@@ -3,446 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 11 (Version 26H2)</title>
+    <title>Windows 11 26H2 - Booting</title>
     <style>
-        :root {
-            --taskbar-bg: rgba(22, 22, 22, 0.75);
-            --window-bg: rgba(32, 32, 32, 0.85);
-            --menu-bg: rgba(32, 32, 32, 0.75);
-            --accent-color: #0078d4;
-            --text-color: #ffffff;
-            --border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: url('https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=2832&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
+            background: #000;
+            margin: 0;
             height: 100vh;
-            overflow: hidden;
-            color: var(--text-color);
-        }
-
-        /* Desktop Icons */
-        .desktop {
-            height: calc(100vh - 48px);
-            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            align-content: flex-start;
-        }
-
-        .desktop-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 80px;
-            gap: 8px;
-            cursor: pointer;
-            text-align: center;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-
-        .desktop-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .desktop-icon svg {
-            width: 40px;
-            height: 40px;
-        }
-
-        .desktop-icon span {
-            font-size: 12px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-        }
-
-        /* Windows 11 Center Taskbar */
-        .taskbar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 48px;
-            background: var(--taskbar-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 12px;
-            z-index: 9999;
-        }
-
-        .taskbar-left {
-            width: 200px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .taskbar-center {
-            display: flex;
-            gap: 6px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .taskbar-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .taskbar-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .taskbar-icon.active::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            width: 6px;
-            height: 3px;
-            background: var(--accent-color);
-            border-radius: 2px;
-        }
-
-        .taskbar-right {
-            width: 200px;
-            display: flex;
-            justify-content: flex-end;
             align-items: center;
-            gap: 12px;
-            font-size: 12px;
-        }
-
-        /* Start Menu (26H2 Layout) */
-        .start-menu {
-            position: fixed;
-            bottom: -600px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 520px;
-            height: 540px;
-            background: var(--menu-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            transition: bottom 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
-            padding: 30px;
-            z-index: 9998;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-
-        .start-menu.open {
-            bottom: 60px;
-        }
-
-        .search-bar-26h2 {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            padding: 10px 16px;
-            font-size: 14px;
-            color: #fff;
-            outline: none;
-            margin-bottom: 24px;
-        }
-
-        .search-bar-26h2::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 16px;
-            margin-bottom: 30px;
-        }
-
-        .app-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .app-item svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        /* Window App OS Container */
-        .window {
-            position: absolute;
-            top: 15%;
-            left: 25%;
-            width: 640px;
-            height: 420px;
-            background: var(--window-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            display: none;
-            flex-direction: column;
             overflow: hidden;
-            z-index: 100;
+            font-family: 'Segoe UI', sans-serif;
         }
+        .logo-container {
+            margin-bottom: 40px;
+        }
+        .win-logo {
+            width: 100px;
+            height: 100px;
+        }
+        /* Win11 Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+        .dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            animation: spin 3.5s infinite cubic-bezier(0.1, 0.9, 0.2, 1);
+            opacity: 0;
+        }
+        .dot:nth-child(1) { animation-delay: 0.15s; }
+        .dot:nth-child(2) { animation-delay: 0.3s; }
+        .dot:nth-child(3) { animation-delay: 0.45s; }
+        .dot:nth-child(4) { animation-delay: 0.6s; }
+        .dot:nth-child(5) { animation-delay: 0.75s; }
 
-        .window-header {
-            padding: 12px;
-            background: rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: move;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .window-title {
-            font-size: 12px;
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 15px;
-        }
-
-        .control-btn {
-            cursor: pointer;
-            opacity: 0.7;
-        }
-
-        .control-btn:hover {
-            opacity: 1;
-        }
-
-        .window-body {
-            padding: 20px;
-            flex: 1;
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        /* Specific styles for Build Info Info App */
-        .specs-table {
-            width: 100%;
-            margin-top: 15px;
-            border-collapse: collapse;
-        }
-        .specs-table td {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 13px;
-        }
-        .specs-table td:first-child {
-            color: rgba(255,255,255,0.6);
-            width: 140px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); opacity: 0; }
+            5% { opacity: 1; }
+            70% { transform: rotate(720deg); opacity: 1; }
+            85% { opacity: 0; }
+            100% { transform: rotate(1080deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Desktop Environment -->
-    <div class="desktop">
-        <div class="desktop-icon" onclick="openWindow('sys-window')">
-            <!-- This PC Icon -->
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="6" width="40" height="26" rx="3" fill="#0078D4"/>
-                <rect x="8" y="10" width="32" height="18" fill="#FFF" fill-opacity="0.2"/>
-                <path d="M16 38L20 32H28L32 38H16Z" fill="#768396"/>
-                <rect x="12" y="38" width="24" height="4" rx="1" fill="#4B5666"/>
-            </svg>
-            <span>This PC</span>
-        </div>
+    <div class="logo-container">
+        <svg class="win-logo" viewBox="0 0 24 24" fill="#0078d4">
+            <path d="M0 0h11.314v11.314H0V0zm12.686 0H24v11.314H12.686V0zM0 12.686h11.314V24H0V12.686zm12.686 0H24V24H12.686V12.686z"/>
+        </svg>
     </div>
 
-    <!-- Core App Window: System Info -->
-    <div class="window" id="sys-window">
-        <div class="window-header" id="sys-header">
-            <div class="window-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#0078D4"><rect width="24" height="24" rx="4"/></svg>
-                System Settings
-            </div>
-            <div class="window-controls">
-                <span class="control-btn" onclick="closeWindow('sys-window')">✕</span>
-            </div>
-        </div>
-        <div class="window-body">
-            <h2 style="margin-bottom: 5px;">Windows 11 Specifications</h2>
-            <p style="color: rgba(255,255,255,0.6); font-size: 13px; margin-bottom: 20px;">Experimental Insider Ecosystem Configuration</p>
-            
-            <table class="specs-table">
-                <tr>
-                    <td>Edition</td>
-                    <td>Windows 11 Pro Enterprise</td>
-                </tr>
-                <tr>
-                    <td>Version</td>
-                    <td>26H2 (K2 Servicing Branch)</td>
-                </tr>
-                <tr>
-                    <td>Installed on</td>
-                    <td id="install-date">July 2026</td>
-                </tr>
-                <tr>
-                    <td>OS Build</td>
-                    <td>26300.1042.ni_release</td>
-                </tr>
-                <tr>
-                    <td>Experience</td>
-                    <td>Windows Feature Experience Pack 1000.26300.0.0</td>
-                </tr>
-                <tr>
-                    <td>Host Platform</td>
-                    <td>GitHub Pages Deployment Pipeline</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <!-- Interactive Start Menu -->
-    <div class="start-menu" id="startMenu">
-        <input type="text" class="search-bar-26h2" placeholder="🔍 Ask Copilot or type to search 26H2 core...">
-        
-        <p style="font-size: 12px; font-weight: 600; margin-bottom: 16px; color: rgba(255,255,255,0.8);">Pinned Apps</p>
-        <div class="apps-grid">
-            <div class="app-item" onclick="openWindow('sys-window'); toggleStartMenu();">
-                <svg viewBox="0 0 48 48" fill="#0078D4"><rect width="48" height="48" rx="8"/></svg>
-                <span>Settings</span>
-            </div>
-            <div class="app-item">
-                <svg viewBox="0 0 48 48" fill="#25D366"><rect width="48" height="48" rx="8"/></svg>
-                <span>Copilot</span>
-            </div>
-            <div class="app-item">
-                <svg viewBox="0 0 48 48" fill="#FF1493"><rect width="48" height="48" rx="8"/></svg>
-                <span>Store</span>
-            </div>
-            <div class="app-item">
-                <svg viewBox="0 0 48 48" fill="#FF8C00"><rect width="48" height="48" rx="8"/></svg>
-                <span>Edge</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Taskbar UI Component -->
-    <div class="taskbar">
-        <div class="taskbar-left">
-            <span>⛅ 72°F / Redmond</span>
-        </div>
-        
-        <div class="taskbar-center">
-            <!-- Win 11 Center Logo Icon Trigger -->
-            <div class="taskbar-icon" onclick="toggleStartMenu()">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#0078d4" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0h11.314v11.314H0V0zm12.686 0H24v11.314H12.686V0zM0 12.686h11.314V24H0V12.686zm12.686 0H24V24H12.686V12.686z"/>
-                </svg>
-            </div>
-            <div class="taskbar-icon active" onclick="openWindow('sys-window')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/></svg>
-            </div>
-        </div>
-
-        <div class="taskbar-right">
-            <span id="taskbar-time">12:00 PM</span>
-            <span id="taskbar-date">7/9/2026</span>
-        </div>
+    <div class="spinner">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
     </div>
 
     <script>
-        // Update Live System Tray Clock directly matching your modern session timeline
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('taskbar-time').textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('taskbar-date').textContent = now.toLocaleDateString();
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // Start Menu Toggle Layouts
-        function toggleStartMenu() {
-            const menu = document.getElementById('startMenu');
-            menu.classList.toggle('open');
-        }
-
-        // Handle Desktop Window Actions
-        function openWindow(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-
-        function closeWindow(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        // Draggable Window Script
-        dragElement(document.getElementById("sys-window"));
-
-        function dragElement(elmnt) {
-            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            if (document.getElementById(elmnt.id + "header")) {
-                document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-            } else {
-                elmnt.onmousedown = dragMouseDown;
-            }
-
-            function dragMouseDown(e) {
-                e = e || window.event;
-                if(e.target.classList.contains('control-btn')) return;
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
-
-            function elementDrag(e) {
-                e = e || window.event;
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-            }
-
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
-        }
+        // Simulate real OS initialization time before loading the core desktop UI
+        setTimeout(() => {
+            window.location.href = 'desktop.html';
+        }, 3500);
     </script>
 </body>
 </html>
