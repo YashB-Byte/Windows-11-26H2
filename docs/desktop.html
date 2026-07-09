@@ -5,6 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Windows 11 Desktop (26H2)</title>
     <link rel="stylesheet" href="desktop.css">
+    <style>
+        /* New inner styling for the Edge Browser interface */
+        .browser-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            color: #000;
+        }
+        .browser-navbar {
+            background: #f3f3f3;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .browser-address-bar {
+            flex: 1;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 13px;
+            outline: none;
+        }
+        .browser-content {
+            flex: 1;
+            padding: 40px;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+        }
+        .search-engine-logo {
+            font-size: 42px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #0078d4, #00c4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .search-engine-input {
+            width: 80%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border-radius: 24px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            font-size: 16px;
+            outline: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -36,7 +91,7 @@
             </div>
             <div class="window-view-pane">
                 <h3>System Drive (C:)</h3>
-                <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 8px;">3 enterprise containers provisioned natively.</p>
+                <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 8px;">26H2 Container Core Active.</p>
             </div>
         </div>
     </div>
@@ -46,7 +101,17 @@
             <div style="font-size: 13px;">🌐 Microsoft Edge</div>
             <div class="window-actions"><span class="action-btn" onclick="toggleWindow('edge-app')">✕</span></div>
         </div>
-        <iframe src="https://www.bing.com" style="width: 100%; flex: 1; border: none; background: #fff;"></iframe>
+        <div class="browser-container">
+            <div class="browser-navbar">
+                <button style="padding: 4px 8px; font-size: 12px; background: #ddd; color: #333;" onclick="resetBrowserSearch()">🏠</button>
+                <input type="text" class="browser-address-bar" id="browserAddress" value="https://www.bing.com">
+            </div>
+            <div class="browser-content" id="browserViewPane">
+                <div class="search-engine-logo">Bing AI</div>
+                <input type="text" class="search-engine-input" id="searchBarInput" placeholder="Search the web or type a URL..." onkeydown="handleBrowserSearch(event)">
+                <div id="browserResults" style="margin-top: 20px; font-size: 14px; text-align: center; color: #555;"></div>
+            </div>
+        </div>
     </div>
 
     <div class="start-flyout" id="startSystemFlyout">
@@ -86,6 +151,26 @@
         function toggleWindow(id) {
             const win = document.getElementById(id);
             win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Functional Browser Core Simulation
+        function handleBrowserSearch(e) {
+            if(e.key === 'Enter') {
+                const query = document.getElementById('searchBarInput').value;
+                document.getElementById('browserAddress').value = "https://www.bing.com/search?q=" + encodeURIComponent(query);
+                document.getElementById('browserResults').innerHTML = `
+                    <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd; text-align: left; max-width: 500px;">
+                        <h3 style="color: #0078d4; margin-bottom: 5px;"><a href="#">${query} - Windows 11 26H2 Update News</a></h3>
+                        <p style="font-size: 13px; color: #444;">Showing search sandbox results for <b>${query}</b> inside the custom compiled web environment architecture.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function resetBrowserSearch() {
+            document.getElementById('browserAddress').value = "https://www.bing.com";
+            document.getElementById('searchBarInput').value = "";
+            document.getElementById('browserResults').innerHTML = "";
         }
 
         bindDrag(document.getElementById("explorer-app"));
