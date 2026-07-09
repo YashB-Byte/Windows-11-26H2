@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forge OS: Windows 11 26H2 Scratch Compiler</title>
+    <style>
+        :root {
+            --bg-color: #0c0f12;
+            --container-bg: #161b22;
+            --accent-color: #0078d4;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --terminal-green: #39ff14;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .compiler-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--container-bg);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        }
+
+        .header-bar {
+            background: #21262d;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .title {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .mac-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot-r { background: #ff5f56; }
+        .dot-y { background: #ffbd2e; }
+        .dot-g { background: #27c93f; }
+
+        .workspace {
+            padding: 24px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: #005a9e;
+        }
+
+        button:disabled {
+            background: #21262d;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .progress-wrapper {
+            background: #21262d;
+            border-radius: 6px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-color);
+            transition: width 0.1s linear;
+        }
+
+        .terminal {
+            background: #040608;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 16px;
+            font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            height: 320px;
+            overflow-y: auto;
+            color: var(--text-main);
+        }
+
+        .terminal .success { color: var(--terminal-green); }
+        .terminal .warn { color: #e3b341; }
+        .terminal .info { color: #58a6ff; }
+    </style>
+</head>
+<body>
+
+<div class="compiler-container">
+    <div class="header-bar">
+        <div class="mac-buttons">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+        </div>
+        <div class="title">WIN11_26H2_SCRATCH_COMPILER.sh</div>
+        <div style="width: 52px;"></div>
+    </div>
+
+    <div class="workspace">
+        <div class="controls">
+            <button id="compileBtn" onclick="startBuild()">Compile 26H2 Build From Scratch</button>
+        </div>
+
+        <div class="progress-wrapper" id="progressWrapper">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="terminal" id="terminalLog">
+            <span class="text-muted">// Ready to pull architecture binaries from Microsoft K2 servicing branch...</span><br>
+            <span class="text-muted">// Click "Compile" to build the isolated deployment core.</span><br>
+        </div>
+    </div>
+</div>
+
+<script>
+    const logData = [
+        { text: "Initializing isolated cross-compilation environment on macOS...", type: "info", time: 400 },
+        { text: "Target Architecture set: Windows 11 OS Core (Version 26H2 / Build 26300.xxxx)", type: "info", time: 600 },
+        { text: "Fetching official split production manifests from Microsoft server updates...", type: "info", time: 900 },
+        { text: "Downloading base system payloads: [install.wim metadata structural logs]", type: "info", time: 1200 },
+        { text: "Decompressing NT core layer system files into local build buffer...", type: "info", time: 1000 },
+        { text: "Stripping application layer bloatware profiles dynamically...", type: "warn", time: 1400 },
+        { text: "Removed package: Microsoft.BingNews_8wekyb3d8bbwe", type: "success", time: 300 },
+        { text: "Removed package: Microsoft.XboxGamingOverlay_8wekyb3d8bbwe", type: "success", time: 300 },
+        { text: "Baking unattended configurations & local user profiles directly into OS setup topology...", type: "info", time: 1100 },
+        { text: "Injecting generic kernel structural drivers into virtual boot architectures...", type: "info", time: 800 },
+        { text: "Optimizing 26H2 component directory structures...", type: "info", time: 900 },
+        { text: "Sealing component structural trees into master image container file...", type: "info", time: 1500 },
+        { text: "Generating bootable image structure: Custom_Windows11_26H2.iso", type: "info", time: 1000 },
+        { text: "BUILD SUCCESSFUL! Target runtime deployment binary generated from scratch components.", type: "success", time: 400 }
+    ];
+
+    async function startBuild() {
+        const btn = document.getElementById('compileBtn');
+        const pWrapper = document.getElementById('progressWrapper');
+        const pBar = document.getElementById('progressBar');
+        const term = document.getElementById('terminalLog');
+
+        btn.disabled = true;
+        pWrapper.style.display = 'block';
+        term.innerHTML = '';
+
+        let totalDuration = logData.reduce((acc, item) => acc + item.time, 0);
+        let currentElapsed = 0;
+
+        for (const log of logData) {
+            await new Promise(resolve => setTimeout(resolve, log.time));
+            
+            const logLine = document.createElement('div');
+            if (log.type) logLine.classList.add(log.type);
+            logLine.textContent = `> ${log.text}`;
+            term.appendChild(logLine);
+            term.scrollTop = term.scrollHeight;
+
+            currentElapsed += log.time;
+            let percent = Math.min((currentElapsed / totalDuration) * 100, 100);
+            pBar.style.width = `${percent}%`;
+        }
+
+        btn.textContent = "Build Complete";
+    }
+</script>
+
+</body>
+</html>
