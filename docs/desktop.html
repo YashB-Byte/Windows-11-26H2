@@ -6,13 +6,14 @@
     <title>Windows 11 Desktop (26H2)</title>
     <style>
         :root {
-            --taskbar-bg: rgba(20, 20, 20, 0.6);
-            --window-bg: rgba(25, 25, 25, 0.85);
-            --window-border: rgba(255, 255, 255, 0.1);
-            --accent-color: #0078d4;
+            --blur-bg: rgba(20, 20, 20, 0.65);
+            --window-bg: rgba(30, 30, 30, 0.8);
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --card-hover: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(255, 255, 255, 0.12);
             --text-main: #ffffff;
             --text-muted: rgba(255, 255, 255, 0.6);
-            --sidebar-bg: rgba(35, 35, 35, 0.6);
+            --accent-color: #0078d4;
         }
 
         * {
@@ -24,7 +25,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover;
             height: 100vh;
@@ -32,129 +33,328 @@
             color: var(--text-main);
         }
 
-        /* Desktop App Layout Workspace */
+        /* Desktop Workspace App Grid */
         .desktop-workspace {
-            position: relative;
-            height: calc(100vh - 56px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 48px;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             align-content: flex-start;
             flex-wrap: wrap;
+            z-index: 1;
         }
 
         .desktop-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 90px;
-            padding: 10px 6px;
-            gap: 8px;
-            border-radius: 6px;
+            justify-content: center;
+            width: 86px;
+            height: 90px;
+            padding: 6px;
+            gap: 6px;
+            border-radius: 4px;
             cursor: pointer;
             text-align: center;
             border: 1px solid transparent;
-            transition: all 0.1s ease;
+            transition: background 0.1s, border-color 0.1s;
         }
 
         .desktop-item:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.05);
         }
 
         .desktop-item svg {
-            width: 42px;
-            height: 42px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            width: 38px;
+            height: 38px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
         }
 
         .desktop-item span {
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11.5px;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-            line-height: 1.3;
+            line-height: 1.2;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        /* Centered Floating Windows 11 Dock Taskbar */
-        .taskbar-dock {
+        /* Robust Windows 11 Centered Taskbar */
+        .taskbar-container {
             position: fixed;
-            bottom: 12px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: var(--blur-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            z-index: 99999;
+        }
+
+        .taskbar-left {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            min-width: 150px;
+        }
+
+        .taskbar-center {
+            position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            height: 48px;
-            background: var(--taskbar-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
             display: flex;
             align-items: center;
-            padding: 0 8px;
-            gap: 4px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-            z-index: 9999;
-        }
-
-        .dock-segment {
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            gap: 2px;
             height: 100%;
         }
 
-        .dock-divider {
-            width: 1px;
-            height: 24px;
-            background: rgba(255,255,255,0.15);
-            margin: 0 6px;
-        }
-
-        .dock-icon {
+        .tb-icon {
             width: 40px;
             height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.2, 1, 0.2, 1);
-            position: relative;
+            transition: background 0.15s, transform 0.1s;
         }
 
-        .dock-icon:hover {
+        .tb-icon:hover {
             background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-4px);
         }
 
-        .dock-icon svg {
-            width: 26px;
-            height: 26px;
+        .tb-icon:active {
+            transform: scale(0.95);
         }
 
-        /* Real-time System Info Widget */
-        .system-tray-widget {
-            padding: 0 12px;
+        .tb-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .taskbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            text-align: right;
+            min-width: 150px;
+            justify-content: flex-end;
+        }
+
+        .system-tray-clock {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .system-tray-clock:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Advanced Deep-Feature Windows 11 Start Menu */
+        .start-menu-flyout {
+            position: fixed;
+            bottom: -640px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 520px;
+            height: 590px;
+            background: rgba(25, 25, 25, 0.82);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: bottom 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 99990;
+        }
+
+        .start-menu-flyout.open {
+            bottom: 60px;
+        }
+
+        .start-search-section {
+            padding: 24px 32px 16px 32px;
+        }
+
+        .start-search-box {
+            width: 100%;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-light);
+            border-bottom: 2px solid var(--accent-color);
+            border-radius: 4px;
+            color: #fff;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .start-body-content {
+            flex: 1;
+            padding: 0 32px;
+            overflow-y: auto;
+        }
+
+        .start-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .start-section-title {
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        .start-btn-more {
+            font-size: 11px;
+            background: rgba(255,255,255,0.08);
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Pinned Grid Elements */
+        .pinned-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px 8px;
+            margin-bottom: 28px;
+        }
+
+        .pinned-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            color: rgba(255,255,255,0.9);
-            min-width: 70px;
+            text-align: center;
+            cursor: pointer;
+            gap: 6px;
         }
 
-        /* High Fidelity Window Shell Components */
+        .pinned-item svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .pinned-item span {
+            font-size: 11px;
+            color: rgba(255,255,255,0.9);
+            max-width: 70px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Recommended File Elements */
+        .recommended-files-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 24px;
+        }
+
+        .rec-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .rec-item:hover {
+            background: var(--card-hover);
+        }
+
+        .rec-icon {
+            font-size: 20px;
+        }
+
+        .rec-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rec-title {
+            font-size: 11.5px;
+            font-weight: 500;
+        }
+
+        .rec-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Start Footer User Drawer */
+        .start-footer-profile {
+            height: 64px;
+            background: rgba(15, 15, 15, 0.4);
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding: 0 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-info-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .profile-avatar {
+            width: 28px;
+            height: 28px;
+            background: #555;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .power-system-icon {
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        .power-system-icon:hover {
+            opacity: 1;
+        }
+
+        /* App Window Infrastructure Shell */
         .app-window {
             position: absolute;
-            width: 760px;
-            height: 490px;
+            width: 740px;
+            height: 480px;
             background: var(--window-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--window-border);
-            border-radius: 10px;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.45);
             display: none;
             flex-direction: column;
             overflow: hidden;
@@ -162,33 +362,32 @@
         }
 
         .window-titlebar {
-            padding: 12px 16px;
-            background: rgba(15, 15, 15, 0.4);
+            padding: 10px 14px;
+            background: rgba(10, 10, 10, 0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: move;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
 
         .window-title {
             font-size: 12px;
+            font-weight: 400;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 500;
+            gap: 6px;
         }
 
         .window-actions {
             display: flex;
-            gap: 14px;
+            gap: 16px;
         }
 
         .action-btn {
             cursor: pointer;
-            font-size: 13px;
-            opacity: 0.6;
-            transition: opacity 0.1s;
+            font-size: 12px;
+            opacity: 0.7;
         }
 
         .action-btn:hover {
@@ -196,84 +395,263 @@
         }
 
         .action-close:hover {
-            color: #ff5f56;
+            color: #ff453a;
         }
 
-        .window-content-split {
-            display: flex;
+        .window-body {
             flex: 1;
-            height: calc(100% - 41px);
+            display: flex;
+            height: calc(100% - 38px);
         }
 
         .window-sidebar {
-            width: 190px;
-            background: var(--sidebar-bg);
-            padding: 14px;
+            width: 170px;
+            background: rgba(20, 20, 20, 0.4);
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             border-right: 1px solid rgba(255,255,255,0.05);
         }
 
-        .sidebar-item {
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12.5px;
+        .sidebar-link {
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
             cursor: pointer;
-            transition: background 0.15s;
         }
 
-        .sidebar-item:hover, .sidebar-item.active {
-            background: rgba(255,255,255,0.06);
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.06);
         }
 
-        .window-view-pane {
-            padding: 24px;
+        .window-main-pane {
             flex: 1;
+            padding: 20px;
             overflow-y: auto;
-        }
-
-        /* Mock App Elements */
-        .browser-iframe-mock {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #ffffff;
         }
     </style>
 </head>
 <body>
 
+    <!-- Desktop Layer App Node Layout Container Grid -->
     <main class="desktop-workspace">
-        <div class="desktop-item" onclick="toggleWindow('explorer-win')">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 10C4 7.79086 5.79086 6 8 6H18L24 12H40C42.2091 12 44 13.7909 44 16V40C44 42.2091 42.2091 44 40 44H8C5.79086 44 4 42.2091 4 40V10Z" fill="#FFA000"/>
-                <path d="M40 16H12L6 40H40C42.2091 40 44 38.2091 44 36V20C44 17.7909 42.2091 16 40 16Z" fill="#FFCA28"/>
-            </svg>
+        <div class="desktop-item" onclick="toggleWindow('explorer-window')">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M4 10C4 7.79 5.79 6 8 6H18L24 12H40C42.2 12 44 13.79 44 16V40C44 42.2 42.2 44 40 44H8C5.79 44 4 42.2 4 40V10Z" fill="#FFA000"/><path d="M40 16H12L6 40H40C42.2 40 44 38.2 44 36V20C44 17.7 42.2 16 40 16Z" fill="#FFCA28"/></svg>
             <span>This PC</span>
         </div>
-
-        <div class="desktop-item" onclick="toggleWindow('edge-win')">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M24 4C12.95 4 4 12.95 4 24C4 35.05 12.95 44 24 44C35.05 44 44 35.05 44 24C44 12.95 35.05 4 24 4ZM24 38C16.28 38 10 31.72 10 24C10 16.28 16.28 10 24 10C31.72 10 38 16.28 38 24C38 31.72 31.72 38 24 38Z" fill="#0078D4"/>
-                <path d="M24 14C18.48 14 14 18.48 14 24C14 29.52 18.48 34 24 34C29.52 34 34 29.52 34 24C34 18.48 29.52 14 24 14Z" fill="#00C4FF"/>
-            </svg>
-            <span>Edge Browser</span>
+        <div class="desktop-item" onclick="toggleWindow('edge-window')">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 4C12.95 4 4 12.95 4 24C4 35.05 12.95 44 24 44C35.05 44 44 35.05 44 24C44 12.95 35.05 4 24 4ZM24 38C16.28 38 10 31.72 10 24C10 16.28 16.28 10 24 10C31.72 10 38 16.28 38 24C38 31.72 31.72 38 24 38Z" fill="#0078D4"/><path d="M24 14C18.48 14 14 18.48 14 24C14 29.52 18.48 34 24 34C29.52 34 34 29.52 34 24C34 18.48 29.52 14 24 14Z" fill="#00C4FF"/></svg>
+            <span>Microsoft Edge</span>
         </div>
     </main>
 
-    <div class="app-window" id="explorer-win" style="top: 15%; left: 20%;">
-        <div class="window-titlebar" id="explorer-win-header">
+    <!-- App Window Framework Node: File Explorer -->
+    <div class="app-window" id="explorer-window" style="top: 14%; left: 18%;">
+        <div class="window-titlebar" id="explorer-window-header">
             <div class="window-title">📁 File Explorer</div>
-            <div class="window-actions">
-                <span class="action-btn action-close" onclick="toggleWindow('explorer-win')">✕</span>
+            <div class="window-actions"><span class="action-btn action-close" onclick="toggleWindow('explorer-window')">✕</span></div>
+        </div>
+        <div class="window-body">
+            <aside class="window-sidebar">
+                <div class="sidebar-link active">🏠 Home Workspace</div>
+                <div class="sidebar-link">🖥️ Local Disk (C:)</div>
+                <div class="sidebar-link">💾 Network Storage</div>
+            </aside>
+            <div class="window-main-pane">
+                <h3 style="font-weight: 500; font-size: 16px;">System Environment Core</h3>
+                <p style="color: var(--text-muted); font-size: 12.5px; margin-top: 6px;">Windows 11 26H2 structural architecture validation active.</p>
             </div>
         </div>
-        <div class="window-content-split">
-            <aside class="window-sidebar">
-                <div class="sidebar-item active">🏠 Quick Access</div>
-                <div class="sidebar-item">🖥️ Local Disk (C:)</div>
-                <div class="sidebar-item">📦 Cloud Repositories</div>
-            </aside>
-            <div class="window-view-pane">
-                <h3 style="margin-bottom: 12px;">
+    </div>
+
+    <!-- App Window Framework Node: Microsoft Edge -->
+    <div class="app-window" id="edge-window" style="top: 10%; left: 22%; width: 800px; height: 520px;">
+        <div class="window-titlebar" id="edge-window-header">
+            <div class="window-title">🌐 Microsoft Edge Sandbox</div>
+            <div class="window-actions"><span class="action-btn action-close" onclick="toggleWindow('edge-window')">✕</span></div>
+        </div>
+        <div class="window-body" style="background: #fff; color: #000; padding: 40px; flex-direction: column; align-items: center; justify-content: center;">
+            <h2 style="color: #0078d4; font-weight: 600; margin-bottom: 8px;">Edge Integration Sandbox</h2>
+            <p style="color: #555; font-size: 13px;">Secure sandboxed localized browsing node initialized.</p>
+        </div>
+    </div>
+
+    <!-- Deep-Feature Authentic Pinned & Recommended Windows 11 Start Menu -->
+    <div class="start-menu-flyout" id="startMenuContainer">
+        <div class="start-search-section">
+            <input type="text" class="start-search-box" placeholder="Type here to search apps, files, and settings...">
+        </div>
+        
+        <div class="start-body-content">
+            <!-- Pinned Segment Box -->
+            <div class="start-section-header">
+                <span class="start-section-title">Pinned</span>
+                <span class="start-btn-more">All apps ❯</span>
+            </div>
+            
+            <div class="pinned-apps-grid">
+                <div class="pinned-item" onclick="toggleWindow('edge-window'); toggleStartMenu();">
+                    <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" fill="#0078D4"/><path d="M24 14C18.48 14 14 18.48 14 24s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10z" fill="#00C4FF"/></svg>
+                    <span>Edge</span>
+                </div>
+                <div class="pinned-item" onclick="toggleWindow('explorer-window'); toggleStartMenu();">
+                    <svg viewBox="0 0 48 48" fill="none"><path d="M4 10h40v30H4z" fill="#FFA000"/></svg>
+                    <span>Explorer</span>
+                </div>
+                <div class="pinned-item">
+                    <svg viewBox="0 0 24 24" fill="#5c5c5c"><rect width="24" height="24" rx="4"/></svg>
+                    <span>Settings</span>
+                </div>
+                <div class="pinned-item">
+                    <svg viewBox="0 0 24 24" fill="#3b5998"><rect width="24" height="24" rx="4"/></svg>
+                    <span>Terminal</span>
+                </div>
+                <div class="pinned-item">
+                    <svg viewBox="0 0 24 24" fill="#1e7145"><rect width="24" height="24" rx="4"/></svg>
+                    <span>Store</span>
+                </div>
+                <div class="pinned-item">
+                    <svg viewBox="0 0 24 24" fill="#d24726"><rect width="24" height="24" rx="4"/></svg>
+                    <span>Mail</span>
+                </div>
+            </div>
+
+            <!-- Recommended Content Segment Box -->
+            <div class="start-section-header">
+                <span class="start-section-title">Recommended</span>
+                <span class="start-btn-more">More ❯</span>
+            </div>
+
+            <div class="recommended-files-layout">
+                <div class="rec-item">
+                    <span class="rec-icon">📄</span>
+                    <div class="rec-text">
+                        <span class="rec-title">SystemConfig.json</span>
+                        <span class="rec-meta">Recently added update logs</span>
+                    </div>
+                </div>
+                <div class="rec-item">
+                    <span class="rec-icon">🖼️</span>
+                    <div class="rec-text">
+                        <span class="rec-title">WallpaperFluid.png</span>
+                        <span class="rec-meta">2 hours ago</span>
+                    </div>
+                </div>
+                <div class="rec-item">
+                    <span class="rec-icon">🗒️</span>
+                    <div class="rec-text">
+                        <span class="rec-title">Notes_26H2.txt</span>
+                        <span class="rec-meta">Yesterday at 4:12 PM</span>
+                    </div>
+                </div>
+                <div class="rec-item">
+                    <span class="rec-icon">🌐</span>
+                    <div class="rec-text">
+                        <span class="rec-title">GitHub Deployment</span>
+                        <span class="rec-meta">Active remote branch node</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Footer Account Status Section -->
+        <div class="start-footer-profile">
+            <div class="profile-info-block">
+                <div class="profile-avatar">A</div>
+                <span>Administrator</span>
+            </div>
+            <div class="power-system-icon">⏻</div>
+        </div>
+    </div>
+
+    <!-- Solid Anchored Windows 11 Fluent Taskbar Layout Component -->
+    <footer class="taskbar-container">
+        <div class="taskbar-left">⛅ 74°F / Redmond</div>
+        
+        <div class="taskbar-center">
+            <!-- Centered Standard Win11 System Icon Nodes -->
+            <div class="tb-icon" onclick="toggleStartMenu()">
+                <svg viewBox="0 0 24 24" fill="#0078d4">
+                    <path d="M0 0h11.314v11.314H0V0zm12.686 0H24v11.314H12.686V0zM0 12.686h11.314V24H0V12.686zm12.686 0H24V24H12.686V12.686z"/>
+                </svg>
+            </div>
+            <div class="tb-icon" onclick="toggleWindow('explorer-window')">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M4 10C4 7.79 5.79 6 8 6H18L24 12H40C42.2 12 44 13.79 44 16V40C44 42.2 42.2 44 40 44H8C5.79 44 4 42.2 4 40V10Z" fill="#FFA000"/><path d="M40 16H12L6 40H40C42.2 40 44 38.2 44 36V20C44 17.7 42.2 16 40 16Z" fill="#FFCA28"/></svg>
+            </div>
+            <div class="tb-icon" onclick="toggleWindow('edge-window')">
+                <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" fill="#0078D4"/><path d="M24 14C18.48 14 14 18.48 14 24s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10z" fill="#00C4FF"/></svg>
+            </div>
+        </div>
+
+        <div class="taskbar-right">
+            <span>🔊 🌐 🔋</span>
+            <div class="system-tray-clock">
+                <span id="systray-clock-time" style="font-weight: 500;">--:--</span>
+                <span id="systray-clock-date" style="color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 1px;">----/--/--</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Precision Dynamic Real-Time Desktop Clock Loop
+        function synchronizeClock() {
+            const timeObj = new Date();
+            let hrs = timeObj.getHours();
+            let mins = timeObj.getMinutes();
+            let ampm = hrs >= 12 ? 'PM' : 'AM';
+            hrs = hrs % 12;
+            hrs = hrs ? hrs : 12;
+            mins = mins < 10 ? '0' + mins : mins;
+
+            document.getElementById('systray-clock-time').textContent = `${hrs}:${mins} ${ampm}`;
+            
+            const opt = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            document.getElementById('systray-clock-date').textContent = timeObj.toLocaleDateString(undefined, opt);
+        }
+        setInterval(synchronizeClock, 1000);
+        synchronizeClock();
+
+        // System Flyout Mechanics
+        function toggleStartMenu() {
+            document.getElementById('startMenuContainer').classList.toggle('open');
+        }
+
+        function toggleWindow(id) {
+            const el = document.getElementById(id);
+            el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Window Move Event Listeners
+        registerDragSystem(document.getElementById("explorer-window"));
+        registerDragSystem(document.getElementById("edge-window"));
+
+        function registerDragSystem(el) {
+            let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
+            const titlebar = document.getElementById(el.id + "-header");
+            if (titlebar) titlebar.onmousedown = startDrag;
+
+            function startDrag(e) {
+                if(e.target.classList.contains('action-btn')) return;
+                e.preventDefault();
+                p3 = e.clientX; p4 = e.clientY;
+                document.onmouseup = endDrag;
+                document.onmousemove = stepDrag;
+            }
+
+            function stepDrag(e) {
+                e.preventDefault();
+                p1 = p3 - e.clientX; p2 = p4 - e.clientY;
+                p3 = e.clientX; p4 = e.clientY;
+                el.style.top = (el.offsetTop - p2) + "px";
+                el.style.left = (el.offsetLeft - p1) + "px";
+            }
+
+            function endDrag() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+    </script>
+</body>
+</html>
