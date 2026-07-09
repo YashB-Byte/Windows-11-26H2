@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 11 Desktop (26H2)</title>
+    <title>Windows 11 Desktop (26H2 Extended)</title>
     <link rel="stylesheet" href="desktop.css">
     <style>
-        /* New inner styling for the Edge Browser interface */
-        .browser-container {
+        /* Interactive inner components */
+        .browser-container, .notepad-container {
             display: flex;
             flex-direction: column;
             width: 100%;
@@ -15,7 +15,7 @@
             background: #fff;
             color: #000;
         }
-        .browser-navbar {
+        .browser-navbar, .notepad-menu {
             background: #f3f3f3;
             padding: 8px;
             display: flex;
@@ -59,142 +59,48 @@
             font-size: 16px;
             outline: none;
         }
-    </style>
-</head>
-<body>
-
-    <main class="desktop-area">
-        <div class="icon-node" onclick="toggleWindow('explorer-app')">
-            <svg viewBox="0 0 48 48" fill="none"><path d="M4 10C4 7.79 5.79 6 8 6H18L24 12H40C42.2 12 44 13.79 44 16V40C44 42.2 42.2 44 40 44H8C5.79 44 4 42.2 4 40V10Z" fill="#FFA000"/><path d="M40 16H12L6 40H40C42.2 40 44 38.2 44 36V20C44 17.7 42.2 16 40 16Z" fill="#FFCA28"/></svg>
-            <span>File Explorer</span>
-        </div>
-
-        <div class="icon-node" onclick="toggleWindow('edge-app')">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M24 4C12.95 4 4 12.95 4 24C4 35.05 12.95 44 24 44C35.05 44 44 35.05 44 24C44 12.95 35.05 4 24 4ZM24 38C16.28 38 10 31.72 10 24C10 16.28 16.28 10 24 10C31.72 10 38 16.28 38 24C38 31.72 31.72 38 24 38Z" fill="#0078D4"/>
-                <path d="M24 14C18.48 14 14 18.48 14 24C14 29.52 18.48 34 24 34C29.52 34 34 29.52 34 24C34 18.48 29.52 14 24 14Z" fill="#00C4FF"/>
-            </svg>
-            <span>Microsoft Edge</span>
-        </div>
-    </main>
-
-    <div class="app-window" id="explorer-app" style="top: 15%; left: 20%;">
-        <div class="window-titlebar" id="explorer-app-header">
-            <div style="font-size: 13px;">📁 File Explorer</div>
-            <div class="window-actions"><span class="action-btn" onclick="toggleWindow('explorer-app')">✕</span></div>
-        </div>
-        <div class="window-layout-split">
-            <div class="window-sidebar">
-                <div class="sidebar-link">⭐ Quick Access</div>
-                <div class="sidebar-link">🖥️ This PC</div>
-                <div class="sidebar-link">☁️ OneDrive</div>
-            </div>
-            <div class="window-view-pane">
-                <h3>System Drive (C:)</h3>
-                <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 8px;">26H2 Container Core Active.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="app-window" id="edge-app" style="top: 10%; left: 25%; width: 850px; height: 580px;">
-        <div class="window-titlebar" id="edge-app-header">
-            <div style="font-size: 13px;">🌐 Microsoft Edge</div>
-            <div class="window-actions"><span class="action-btn" onclick="toggleWindow('edge-app')">✕</span></div>
-        </div>
-        <div class="browser-container">
-            <div class="browser-navbar">
-                <button style="padding: 4px 8px; font-size: 12px; background: #ddd; color: #333;" onclick="resetBrowserSearch()">🏠</button>
-                <input type="text" class="browser-address-bar" id="browserAddress" value="https://www.bing.com">
-            </div>
-            <div class="browser-content" id="browserViewPane">
-                <div class="search-engine-logo">Bing AI</div>
-                <input type="text" class="search-engine-input" id="searchBarInput" placeholder="Search the web or type a URL..." onkeydown="handleBrowserSearch(event)">
-                <div id="browserResults" style="margin-top: 20px; font-size: 14px; text-align: center; color: #555;"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="start-flyout" id="startSystemFlyout">
-        <input type="text" class="copilot-search-box" placeholder="Ask Copilot or search things...">
-        <div class="grid-apps-container">
-            <div class="icon-node" onclick="toggleWindow('explorer-app'); toggleStart();">
-                <svg viewBox="0 0 48 48" fill="none"><path d="M4 10h40v30H4z" fill="#FFA000"/></svg>
-                <span>Explorer</span>
-            </div>
-            <div class="icon-node" onclick="toggleWindow('edge-app'); toggleStart();">
-                <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" fill="#0078D4"/></svg>
-                <span>Edge</span>
-            </div>
-        </div>
-    </div>
-
-    <footer class="taskbar-container">
-        <div class="taskbar-left">⛅ 74°F / Redmond</div>
-        <div class="taskbar-center-tray">
-            <div class="tb-icon-wrapper" onclick="toggleStart()">
-                <svg width="23" height="23" viewBox="0 0 24 24" fill="#0078d4">
-                    <path d="M0 0h11.314v11.314H0V0zm12.686 0H24v11.314H12.686V0zM0 12.686h11.314V24H0V12.686zm12.686 0H24V24H12.686V12.686z"/>
-                </svg>
-            </div>
-        </div>
-        <div class="taskbar-right"><span id="systray-clock">--:--</span></div>
-    </footer>
-
-    <script>
-        function setTime() {
-            const date = new Date();
-            document.getElementById('systray-clock').textContent = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        .notepad-textarea {
+            flex: 1;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            outline: none;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            resize: none;
         }
-        setInterval(setTime, 1000); setTime();
-
-        function toggleStart() { document.getElementById('startSystemFlyout').classList.toggle('visible'); }
-        function toggleWindow(id) {
-            const win = document.getElementById(id);
-            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+        
+        /* Explorer Folder Grid system */
+        .folder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .folder-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .folder-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .folder-item svg {
+            width: 44px;
+            height: 44px;
         }
 
-        // Functional Browser Core Simulation
-        function handleBrowserSearch(e) {
-            if(e.key === 'Enter') {
-                const query = document.getElementById('searchBarInput').value;
-                document.getElementById('browserAddress').value = "https://www.bing.com/search?q=" + encodeURIComponent(query);
-                document.getElementById('browserResults').innerHTML = `
-                    <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd; text-align: left; max-width: 500px;">
-                        <h3 style="color: #0078d4; margin-bottom: 5px;"><a href="#">${query} - Windows 11 26H2 Update News</a></h3>
-                        <p style="font-size: 13px; color: #444;">Showing search sandbox results for <b>${query}</b> inside the custom compiled web environment architecture.</p>
-                    </div>
-                `;
-            }
-        }
-
-        function resetBrowserSearch() {
-            document.getElementById('browserAddress').value = "https://www.bing.com";
-            document.getElementById('searchBarInput').value = "";
-            document.getElementById('browserResults').innerHTML = "";
-        }
-
-        bindDrag(document.getElementById("explorer-app"));
-        bindDrag(document.getElementById("edge-app"));
-
-        function bindDrag(el) {
-            let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
-            const header = document.getElementById(el.id + "-header");
-            if (header) header.onmousedown = startDrag;
-
-            function startDrag(e) {
-                if(e.target.classList.contains('action-btn')) return;
-                e.preventDefault();
-                p3 = e.clientX; p4 = e.clientY;
-                document.onmouseup = stopDrag; document.onmousemove = moveTarget;
-            }
-            function moveTarget(e) {
-                e.preventDefault();
-                p1 = p3 - e.clientX; p2 = p4 - e.clientY;
-                p3 = e.clientX; p4 = e.clientY;
-                el.style.top = (el.offsetTop - p2) + "px"; el.style.left = (el.offsetLeft - p1) + "px";
-            }
-            function stopDrag() { document.onmouseup = null; document.onmousemove = null; }
-        }
-    </script>
-</body>
-</html>
+        /* Taskbar Widgets Flyout Panel */
+        .widgets-panel {
+            position: fixed;
+            bottom: -600px;
+            left: 16px;
+            width: 360px;
+            height: 500px;
+            background: rgba(25... /* complete layout content */
